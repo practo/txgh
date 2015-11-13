@@ -66,7 +66,17 @@ module Strava
           raise "Failed Transifex API call - returned status code: #{response.status}, body: #{response.body}"
         end
         json_data = JSON.parse response.body
-        json_data['content']
+
+        # In case of yaml remove the root element which holds the value of locale
+        if tx_resource.type == 'YAML'
+          content = ""
+          json_data['content'].split(/\n[\s]/).map(&:strip).drop(1).each do |con|
+            content += (con.split(":").length() > 1) ? con + "\n" : "    " + con + "\n"
+          end
+          content
+        else
+          json_data['content']
+        end
       end
 
     end
