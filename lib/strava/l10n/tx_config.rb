@@ -24,6 +24,7 @@ module Strava
         lang_map.split(',').inject({}) do |result, m|
           key_value = m.split(':', 2)
           result[key_value[0].strip] = key_value[1].strip
+          result
         end
       end
 
