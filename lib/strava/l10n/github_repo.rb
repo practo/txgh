@@ -16,6 +16,34 @@ module Strava
         @name
       end
 
+      def pr_title
+        @config['pr_title'] != nil ? @config['pr_title'] : "Transifex - New/Updated translations"
+      end
+
+      def pr_body
+        @config['pr_body'] != nil ? @config['pr_body'] : "Translation updates"
+      end
+
+      def pr_assignee
+        @config['pr_assignee']
+      end
+
+      def commit_message
+        @config['commit_message'] != nil ? @config['commit_message'] : "Transifex Integration - Updating translations for #{path}"
+      end
+
+      def push_to_master
+        @config['push_to_master'] != nil ? @config['push_to_master'] : false
+      end
+
+      def push_branch_prefix
+        @config['push_branch_prefix'] != nil ? @config['push_branch_prefix'] : "transifex-integration"
+      end
+
+      def push_to_branch
+        (push_to_master != nil || push_to_master != 'false') ? "heads/#{push_branch_prefix}-#{Time.now.to_i}" : "heads/master"
+      end
+
       def transifex_project
         @transifex_project = @transifex_project ||
             Strava::L10n::TransifexProject.new(@config['push_source_to'])

@@ -1,0 +1,20 @@
+txgh:
+    github:
+        repos:
+            <USER/REPO/PULL/PATH>:
+                api_username: <GITHUB-API-USERNAME>
+                api_token: <GITHUB-API-TOKEN>
+                push_to_master: <true|false>
+                push_branch_prefix: <NEW-BRANCH-PREFIX>
+                pr_title: <PULL-REQUEST-TITLE>
+                pr_body: <PULL-REQUEST-BODY>
+                pr_assignee: <PULL-REQUEST-DEFAULT-ASSIGNEE-USERNAME>
+                commit_message: <COMMIT-MESSAGE>
+                push_source_to: <TRANSIFEX-PROJECT-SLUG>
+    transifex:
+        projects:
+            <TRANSIFEX-PROJECT-SLUG>:
+                tx_config: "./config/tx.config"
+                api_username: <TRANSIFEX-USERNAME>
+                api_password: <TRANSIFEX-PASSWORD>
+                push_translations_to: <USER/REPO/PULL/PATH>

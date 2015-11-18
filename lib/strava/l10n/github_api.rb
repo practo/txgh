@@ -20,16 +20,56 @@ module Strava
         @client.blob(repo, sha)
       end
 
-      def commit(repo, path, content)
+      def create_branch(repo, config_options, master)
+        @client.create_ref repo, config_options[:branch_slug], master[:object][:sha]
+      end
+
+      def assign_pull_request(repo, config_options, pr)
+        # Assign PR to user
+        if config_options[:assignee] != nil || pr['number'] != nil
+          @client.update_issue(repo,
+            pr['number'],
+            config_options[:pr_title],
+            config_options[:pr_body],
+            :assignee => config_options[:assignee]
+          )
+        else
+          raise ArgumentError.new(
+            config_options[:assignee] == nil ? "invalid value assignee: \"#{self}\"" : "invalid PR: \"#{self}\""
+          )
+        end
+      end
+
+      def create_pull_request(repo, config_options)
+        # Create a PR
+        @client.create_pull_request(
+          repo,
+          "master",
+          config_options[:branch_slug].split('/').last,
+          config_options[:pr_title],
+          config_options[:pr_body]
+        )
+      end
+
+      def commit(repo, path, content, config_options = {})
         blob = @client.create_blob repo, content
         master = @client.ref repo, 'heads/master'
-        base_commit = @client.commit repo, master[:object][:sha]
+        # Create new branch if branch_slug is not master
+        branch = master
+        if config_options[:branch_slug] != 'heads/master'
+          branch = create_branch(repo, config_options, master)
+        end
+        base_commit = @client.commit repo, branch[:object][:sha]
         tree = @client.create_tree repo,
                                    [{ path: path, mode: '100644', type: 'blob', sha: blob }],
                                    options = {base_tree: base_commit[:commit][:tree][:sha]}
-        commit = @client.create_commit repo, "Updating translations for #{path}", tree[:sha],
-                                       parents=master[:object][:sha]
-        @client.update_ref repo, 'heads/master', commit[:sha]
+        commit = @client.create_commit repo, config_options[:commit_message], tree[:sha],
+                                       parents=branch[:object][:sha]
+        @client.update_ref repo, config_options[:branch_slug], commit[:sha]
+        if config_options[:branch_slug] != 'heads/master'
+          pr = create_pull_request(repo, config_options)
+          assign_pull_request(repo, config_options, pr)
+        end
       end
 
       def get_commit(repo, sha)

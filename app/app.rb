@@ -46,13 +46,22 @@ module L10n
       if request['translated'] == '100'
         transifex_project = Strava::L10n::TransifexProject.new(request['project'])
         tx_resource = transifex_project.resource(request['resource'])
-
         # Do not update the source
         unless request['language'] == tx_resource.source_lang
           translation = transifex_project.api.download(tx_resource, request['language'])
           translation_path = tx_resource.translation_path(transifex_project.lang_map(request['language']))
           transifex_project.github_repo.api.commit(
-              transifex_project.github_repo.name, translation_path, translation)
+              transifex_project.github_repo.name,
+              translation_path,
+              translation,
+              {
+                :branch_slug => transifex_project.github_repo.push_to_branch,
+                :commit_message => transifex_project.github_repo.commit_message,
+                :pr_title => transifex_project.github_repo.pr_title,
+                :pr_body => transifex_project.github_repo.pr_body,
+                :assignee => transifex_project.github_repo.pr_assignee
+              }
+          )
         end
       end
     end
