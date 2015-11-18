@@ -34,17 +34,24 @@ The server also needs some configuration, in a config/txgh.yml file:
 txgh:
     github:
         repos:
-            <your/full/repo/name>:
-                api_username: <your Github API username>
-                api_token: <your Github API token>
-                push_source_to: ios-transifex-demo
+            <USER/REPO/PULL/PATH>:
+                api_username: <GITHUB-API-USERNAME>
+                api_token: <GITHUB-API-TOKEN>
+                push_to_master: <true|false>
+                push_branch_prefix: <NEW-BRANCH-PREFIX>
+                pr_title: <PULL-REQUEST-TITLE>
+                pr_body: <PULL-REQUEST-BODY>
+                pr_assignee: <PULL-REQUEST-DEFAULT-ASSIGNEE-USERNAME>
+                commit_message: <COMMIT-MESSAGE>
+                push_source_to: <TRANSIFEX-PROJECT-SLUG>
     transifex:
         projects:
-            <transifex project slug>:
-                tx_config: "/path/to/.tx/config, see below if you do not have any"
-                api_username: <Transifex API username>
-                api_password: <Transifex API password>
-                push_translations_to: <full/github/repo/name>
+            <TRANSIFEX-PROJECT-SLUG>:
+                tx_config: "./config/tx.config"
+                api_username: <TRANSIFEX-USERNAME>
+                api_password: <TRANSIFEX-PASSWORD>
+                push_translations_to: <USER/REPO/PULL/PATH>
+
 ```
 
 If your project uses Transifex already, and uses the Transifex client, you most likely have a .tx directory in your repo where the .tx config file mentioned above is located. If you do not have one, you can use this template to make your own:
