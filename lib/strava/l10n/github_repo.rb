@@ -33,7 +33,7 @@ module Strava
       end
 
       def push_to_master
-        @config['push_to_master'] != nil ? @config['push_to_master'] : false
+        (@config['push_to_master'] != nil) ? @config['push_to_master'] : true
       end
 
       def push_branch_prefix
@@ -41,7 +41,7 @@ module Strava
       end
 
       def push_to_branch
-        (push_to_master != nil || push_to_master != 'false') ? "heads/#{push_branch_prefix}-#{Time.now.to_i}" : "heads/master"
+        (['false', false].include? push_to_master) ? "#{push_branch_prefix}-#{Time.now.to_i}" : "master"
       end
 
       def transifex_project
